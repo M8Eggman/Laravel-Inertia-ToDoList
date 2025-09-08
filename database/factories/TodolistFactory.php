@@ -14,10 +14,11 @@ class TodolistFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
+    public function definition()
     {
         return [
-            //
+            'title' => $this->faker->sentence(3),
+            'completed' => $this->faker->boolean(30),
         ];
     }
 }

@@ -9,4 +9,7 @@ class Todolist extends Model
 {
     /** @use HasFactory<\Database\Factories\TodolistFactory> */
     use HasFactory;
+
+    protected $fillable = ['title', 'completed'];
+
 }
