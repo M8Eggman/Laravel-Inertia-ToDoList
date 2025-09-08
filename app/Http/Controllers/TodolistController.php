@@ -7,6 +7,7 @@ use App\Models\Todolist;
 use App\Http\Requests\StoreTodolistRequest;
 use App\Http\Requests\UpdateTodolistRequest;
 use Inertia\Inertia;
+use Request;
 
 class TodolistController extends Controller
 {
@@ -17,9 +18,20 @@ class TodolistController extends Controller
     {
         $taches = Todolist::all();
         $themes = Theme::all();
-        return Inertia::render('ToDoList', compact('taches'));
+        $activeTheme = Theme::where("active", true);
+        return Inertia::render('ToDoList', compact('taches', 'themes', 'activeTheme'));
     }
 
+    public function setTheme(Request $request)
+    {
+        // Désactive tous les thèmes
+        Theme::query()->update(['active' => false]);
+
+        // Active le thème sélectionné
+        Theme::where('id', $request->theme_id)->update(['active' => true]);
+
+        return Inertia::location(url()->previous());
+    }
     /**
      * Show the form for creating a new resource.
      */
