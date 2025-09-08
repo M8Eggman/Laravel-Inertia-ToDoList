@@ -3,21 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Theme;
-use App\Models\Todolist;
-use App\Http\Requests\StoreTodolistRequest;
-use App\Http\Requests\UpdateTodolistRequest;
-use Inertia\Inertia;
+use App\Http\Requests\StoreThemeRequest;
+use App\Http\Requests\UpdateThemeRequest;
 
-class TodolistController extends Controller
+class ThemeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $taches = Todolist::all();
-        $themes = Theme::all();
-        return Inertia::render('ToDoList', compact('taches'));
+        //
     }
 
     /**
@@ -31,7 +27,7 @@ class TodolistController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTodolistRequest $request)
+    public function store(StoreThemeRequest $request)
     {
         //
     }
@@ -39,7 +35,7 @@ class TodolistController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Todolist $todolist)
+    public function show(Theme $theme)
     {
         //
     }
@@ -47,7 +43,7 @@ class TodolistController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Todolist $todolist)
+    public function edit(Theme $theme)
     {
         //
     }
@@ -55,7 +51,7 @@ class TodolistController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTodolistRequest $request, Todolist $todolist)
+    public function update(UpdateThemeRequest $request, Theme $theme)
     {
         //
     }
@@ -63,7 +59,7 @@ class TodolistController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Todolist $todolist)
+    public function destroy(Theme $theme)
     {
         //
     }
