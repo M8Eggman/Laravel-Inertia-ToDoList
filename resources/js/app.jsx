@@ -2,7 +2,7 @@ import "./bootstrap";
 import { createRoot } from "react-dom/client";
 import { createInertiaApp } from "@inertiajs/react";
 import { InertiaProgress } from "@inertiajs/progress";
-import { Ziggy, route } from 'ziggy-js';
+import { route } from "ziggy-js";
 
 createInertiaApp({
     resolve: (name) => {
@@ -12,7 +12,8 @@ createInertiaApp({
     setup({ el, App, props }) {
         createRoot(el).render(<App {...props} />);
     },
-    title: (title) => `${title} - ${import.meta.env.VITE_APP_NAME || 'Laravel'}`,
+    title: (title) =>
+        `${title} - ${import.meta.env.VITE_APP_NAME || "Laravel"}`,
 });
 
 InertiaProgress.init({
@@ -22,4 +23,5 @@ InertiaProgress.init({
     showSpinner: true,
 });
 
-window.route = (name, params, absolute) => route(name, params, absolute, Ziggy);
+window.route = (name, params, absolute) =>
+    route(name, params, absolute, window.Ziggy);
