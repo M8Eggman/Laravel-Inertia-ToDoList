@@ -70,12 +70,14 @@ class TodolistController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTodolistRequest $request, Todolist $todolist)
+    public function update(UpdateTodolistRequest $request, $id)
     {
         $request->validate([
             'title' => ['required', 'string', 'max:50'],
             'completed' => ['required', 'boolean']
         ]);
+
+        $todolist = Todolist::findOrFail($id);
 
         $todolist->title = $request->title;
         $todolist->completed = $request->completed;
@@ -84,11 +86,13 @@ class TodolistController extends Controller
 
         return;
     }
-    public function update_checked(UpdateTodolistRequest $request, Todolist $todolist)
+    public function update_checked(UpdateTodolistRequest $request, $id)
     {
         $request->validate([
             'completed' => ['required', 'boolean']
         ]);
+
+        $todolist = Todolist::findOrFail($id);
 
         $todolist->completed = $request->completed;
 
@@ -100,9 +104,9 @@ class TodolistController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Todolist $todolist)
+    public function destroy($id)
     {
-        $todolist->delete();
+        Todolist::findOrFail($id)->delete();
         return;
     }
     public function destroy_completed()

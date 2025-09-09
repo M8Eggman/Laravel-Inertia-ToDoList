@@ -10,6 +10,8 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
     });
 
     const [tempTasks, setTempTasks] = useState(taches);
+    // Garde en mémoire le dernier id
+    const [id, setId] = useState(lastId);
 
     // Initialise le thème depuis localStorage ou le thème actif passé en props
     const [theme, setTheme] = useState(() => {
@@ -70,24 +72,27 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
 
         setLoading(true);
 
-        // Crée la nouvelle tâche
-        const lastTask = tempTasks[tempTasks.length - 1];
-        const id = (lastTask?.id ?? lastId) + 1;
+        setId((prev) => prev + 1);
 
+        // Crée la nouvelle tâche
         const newTask = {
-            id: id,
+            id: id + 1,
             title: data.title.trim(),
             completed: data.completed,
         };
 
         setTempTasks((tasks) => [...tasks, newTask]);
 
-        reset();
+        setData("title", "");
+        setData("completed", false);
 
         post(route("tasks.store"), {
             preserveScroll: true,
             preserveState: true,
-            data: newTask,
+            data: {
+                title: data.title.trim(),
+                completed: data.completed,
+            },
             onFinish: () => {
                 clearInterval(submitTimeout.current);
                 submitTimeout.current = setTimeout(() => {
@@ -99,6 +104,8 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
 
     const intervalRef = useRef({});
     function handleToggleTask(e, id) {
+        if (loading) return;
+
         // Supprime le timeout existant si re clique sur le même checked
         if (intervalRef.current[id]) {
             clearTimeout(intervalRef.current[id]);
@@ -123,6 +130,8 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
     }
 
     function handleDestroy(id) {
+        if (loading) return;
+
         setTempTasks((tasks) => tasks.filter((t) => t.id !== id));
         router.delete(route("tasks.destroy", id), {
             preserveScroll: true,
@@ -131,6 +140,8 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
     }
 
     function handleDestroyComplete() {
+        if (loading) return;
+
         setTempTasks((tasks) => tasks.filter((t) => !t.completed));
         router.delete(route("tasks.destroy.completed"), {
             preserveScroll: true,
@@ -212,9 +223,13 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                             <small className="text-muted text-sm-custom">
                                 Tâche de 50 charactères maximal
                             </small>
-                            {loading && (
-                                <div className="w-full mt-2 h-1 bg-blue-500 animate-pulse"></div>
-                            )}
+                            <div
+                                className={`w-full mt-2 h-1 bg-blue-500  ${
+                                    loading
+                                        ? "opacity-100 animate-pulse"
+                                        : "opacity-0"
+                                }`}
+                            ></div>
                             <form
                                 onSubmit={handleSubmit}
                                 className="flex px-5 mt-2 gap-5 bg-secondary items-center"
