@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-.bgImage {
+/* .bgImage {
     background-image: linear-gradient(
             to right,
             rgba(0, 0, 255, 0.55),
@@ -12,7 +12,8 @@
     background-position: 50% 35%;
     background-repeat: no-repeat;
     background-size: max(1920px, 100%);
-}
+} */
+
 .bg {
     background-color: var(--bg);
 }

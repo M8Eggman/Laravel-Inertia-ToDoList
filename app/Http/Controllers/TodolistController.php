@@ -27,7 +27,7 @@ class TodolistController extends Controller
         // Désactive tous les thèmes
         Theme::query()->update(['active' => false]);
 
-        // Active le thème sélectionné
+        // Active le thème sélectionné par défaut
         Theme::where('id', $request->theme_id)->update(['active' => true]);
 
         return Inertia::location(url()->previous());

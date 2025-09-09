@@ -39,7 +39,7 @@ class ThemeSeeder extends Seeder
                     "bg_secondary" => "#d1fae5",
                     "text" => "#065f46",
                     "text_muted" => "#10b981",
-                    "accent" => "#34d399",
+                    "accent" => "#059669",
                 ],
                 'active' => false,
             ],
