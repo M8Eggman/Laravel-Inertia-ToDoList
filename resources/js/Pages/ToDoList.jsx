@@ -3,7 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import { RxCheck, RxCross1 } from "react-icons/rx";
 import { route } from "ziggy-js";
 
-export default function ToDoList({ taches, themes, activeTheme }) {
+export default function ToDoList({ taches, themes, activeTheme, lastId }) {
+    const { post, data, setData, errors, reset } = useForm({
+        title: "",
+        completed: false,
+    });
+
     const intervalRef = useRef({});
     const [tempTasks, setTempTasks] = useState(taches);
 
@@ -52,6 +57,33 @@ export default function ToDoList({ taches, themes, activeTheme }) {
             : tempTasks.filter((t) =>
                   filter === "active" ? !t.completed : t.completed
               );
+
+    function handleSubmit(e) {
+        e.preventDefault();
+
+        // Empêche la création si le champ est vide ou ne contient que des espaces
+        if (!data.title || !data.title.trim()) return;
+
+        const lastTask = tempTasks[tempTasks.length - 1];
+        const id = (lastTask?.id ?? lastId) + 1;
+
+        const newTask = {
+            id: id,
+            title: data.title.trim(),
+            completed: data.completed,
+        };
+
+        setTempTasks((tasks) => [...tasks, newTask]);
+
+        reset("title");
+        reset("completed");
+
+        post(route("tasks.store"), {
+            preserveScroll: true,
+            preserveState: true,
+            data: newTask,
+        });
+    }
 
     function handleToggleTask(e, id) {
         // Supprime le timeout existant si re clique
@@ -166,15 +198,43 @@ export default function ToDoList({ taches, themes, activeTheme }) {
                             </select>
                         </div>
                         <div>
-                            <form action="">
-                                <small className="text-muted text-sm-custom">
-                                    Tâche de 50 charactères maximal
-                                </small>
+                            <small className="text-muted text-sm-custom">
+                                Tâche de 50 charactères maximal
+                            </small>
+                            <form
+                                onSubmit={handleSubmit}
+                                className="flex px-5 mt-1 gap-5 bg-secondary items-center"
+                            >
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        id="task-create"
+                                        className="hidden peer"
+                                        checked={data.completed}
+                                        value={data.completed}
+                                        onChange={(e) =>
+                                            setData(
+                                                "completed",
+                                                e.target.checked
+                                            )
+                                        }
+                                    />
+                                    <label
+                                        htmlFor="task-create"
+                                        className="flex items-center justify-center w-6 h-6 border-2 rounded-lg cursor-pointer border-[var(--accent)] text-[var(--accent)] peer-hover:bg-[var(--accent)] peer-checked:bg-[var(--accent)] peer-checked:text-[var(--text)] transition-all"
+                                    >
+                                        {data.completed ? <RxCheck /> : ""}
+                                    </label>
+                                </div>
                                 <input
                                     type="text"
                                     placeholder="Create a new ToDo..."
                                     maxLength={50}
-                                    className="w-full bg-secondary h-[50px] text border-none focus:outline-none focus:ring-2 focus:ring-[var(--accent)] px-5 min-h-[70px]"
+                                    className="flex-grow bg-secondary h-[50px] text border-none focus:outline-none focus:ring-2 focus:ring-[var(--accent)] px-5 min-h-[70px]"
+                                    value={data.title}
+                                    onChange={(e) =>
+                                        setData("title", e.target.value)
+                                    }
                                 />
                             </form>
                         </div>

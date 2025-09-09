@@ -8,6 +8,7 @@ Route::get('/', function () {
 });
 
 Route::get('/tasks', [TodolistController::class, 'index'])->name('tasks.index');
+Route::post('/tasks/store', [TodolistController::class, 'store'])->name('tasks.store');
 Route::put('/tasks/{todolist}/update', [TodolistController::class, 'update'])->name('tasks.update');
 Route::put('/tasks/{todolist}/update_checked', [TodolistController::class, 'update_checked'])->name('tasks.update.checked');
 Route::delete('/tasks/{todolist}/delete', [TodolistController::class, 'destroy'])->name('tasks.destroy');

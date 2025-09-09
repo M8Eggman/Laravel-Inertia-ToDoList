@@ -19,7 +19,10 @@ class TodolistController extends Controller
         $taches = Todolist::all();
         $themes = Theme::all();
         $activeTheme = Theme::where("active", true);
-        return Inertia::render('ToDoList', compact('taches', 'themes', 'activeTheme'));
+
+        $lastId = Todolist::max('id') ?? 0;
+
+        return Inertia::render('ToDoList', compact('taches', 'themes', 'activeTheme', 'lastId'));
     }
 
     /**
@@ -35,7 +38,17 @@ class TodolistController extends Controller
      */
     public function store(StoreTodolistRequest $request)
     {
-        //
+        $tache = new Todolist();
+
+        $request->validate([
+            'title' => ['required', 'string', 'max:50'],
+            'completed' => ['boolean']
+        ]);
+
+        $tache->title = $request->title;
+        $tache->completed = $request->completed;
+
+        $tache->save();
     }
 
     /**
