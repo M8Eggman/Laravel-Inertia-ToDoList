@@ -97,6 +97,31 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
         });
     }
 
+    const intervalRef = useRef({});
+    function handleToggleTask(e, id) {
+        // Supprime le timeout existant si re clique sur le même checked
+        if (intervalRef.current[id]) {
+            clearTimeout(intervalRef.current[id]);
+            delete intervalRef.current[id];
+        }
+
+        // Mise à jour immédiate côté frontend
+        setTempTasks((tasks) =>
+            tasks.map((t) =>
+                t.id === id ? { ...t, completed: e.target.checked } : t
+            )
+        );
+
+        // Définit un nouveau timeout pour mettre à jour la DB
+        intervalRef.current[id] = setTimeout(() => {
+            router.put(route("tasks.update.checked", id), {
+                completed: e.target.checked,
+                preserveScroll: true,
+                preserveState: true,
+            });
+        }, 300);
+    }
+
     function handleDestroy(id) {
         setTempTasks((tasks) => tasks.filter((t) => t.id !== id));
         router.delete(route("tasks.destroy", id), {
