@@ -22,16 +22,6 @@ class TodolistController extends Controller
         return Inertia::render('ToDoList', compact('taches', 'themes', 'activeTheme'));
     }
 
-    public function setTheme(Request $request)
-    {
-        // Désactive tous les thèmes
-        Theme::query()->update(['active' => false]);
-
-        // Active le thème sélectionné par défaut
-        Theme::where('id', $request->theme_id)->update(['active' => true]);
-
-        return Inertia::location(url()->previous());
-    }
     /**
      * Show the form for creating a new resource.
      */
@@ -69,7 +59,29 @@ class TodolistController extends Controller
      */
     public function update(UpdateTodolistRequest $request, Todolist $todolist)
     {
-        //
+        $request->validate([
+            'title' => ['required', 'string', 'max:50'],
+            'completed' => ['required', 'boolean']
+        ]);
+
+        $todolist->title = $request->title;
+        $todolist->completed = $request->completed;
+
+        $todolist->update();
+
+        return;
+    }
+    public function update_checked(UpdateTodolistRequest $request, Todolist $todolist)
+    {
+        $request->validate([
+            'completed' => ['required', 'boolean']
+        ]);
+
+        $todolist->completed = $request->completed;
+
+        $todolist->update();
+
+        return;
     }
 
     /**

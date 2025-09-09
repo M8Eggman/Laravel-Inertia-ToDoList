@@ -1,16 +1,17 @@
-import { useForm } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
-import { RxCross1 } from "react-icons/rx";
+import { RxCheck, RxCross1 } from "react-icons/rx";
 import { route } from "ziggy-js";
 
 export default function ToDoList({ taches, themes, activeTheme }) {
-    const { delete: destroy } = useForm();
+    const intervalRef = useRef({});
     const [tempTasks, setTempTasks] = useState(taches);
 
     // Initialise le thème depuis localStorage ou le thème actif passé en props
     const [theme, setTheme] = useState(() => {
         return localStorage.getItem("theme") ?? activeTheme?.name ?? "Clair";
     });
+
     // Met à jour le localStorage quand le thème change
     useEffect(() => {
         localStorage.setItem("theme", theme);
@@ -30,15 +31,6 @@ export default function ToDoList({ taches, themes, activeTheme }) {
     // Récupère les couleurs du thème sélectionné
     const themeColors = themes.find((t) => t.name === theme)?.colors;
     // Définie les variables CSS selon le thème sélectionné
-    const cssVariables = themeColors
-        ? {
-              "--bg": themeColors.bg,
-              "--bg-secondary": themeColors.bg_secondary,
-              "--text": themeColors.text,
-              "--text-muted": themeColors.text_muted,
-              "--accent": themeColors.accent,
-          }
-        : {};
     useEffect(() => {
         if (!themeColors) return;
 
@@ -61,9 +53,35 @@ export default function ToDoList({ taches, themes, activeTheme }) {
                   filter === "active" ? !t.completed : t.completed
               );
 
-    function handleDestroy(task) {
-        setTempTasks((tasks) => tasks.filter((t) => t.id !== task.id));
-        destroy(route("tasks.destroy", task.id), {
+    function handleToggleTask(e, id) {
+        // Supprime le timeout existant si re clique
+        if (intervalRef.current[id]) {
+            clearTimeout(intervalRef.current[id]);
+            delete intervalRef.current[id];
+        }
+
+        // Mise à jour immédiate côté frontend
+        setTempTasks((tasks) =>
+            tasks.map((t) =>
+                t.id === id ? { ...t, completed: e.target.checked } : t
+            )
+        );
+
+        console.log(e.target.checked);
+
+        // Définit un nouveau timeout pour mettre à jour la DB
+        intervalRef.current[id] = setTimeout(() => {
+            router.put(route("tasks.update.checked", id), {
+                completed: e.target.checked,
+                preserveScroll: true,
+                preserveState: true,
+            });
+        }, 300);
+    }
+
+    function handleDestroy(id) {
+        setTempTasks((tasks) => tasks.filter((t) => t.id !== id));
+        router.delete(route("tasks.destroy", id), {
             preserveScroll: true,
             preserveState: true,
         });
@@ -71,7 +89,7 @@ export default function ToDoList({ taches, themes, activeTheme }) {
 
     function handleDestroyComplete() {
         setTempTasks((tasks) => tasks.filter((t) => !t.completed));
-        destroy(route("tasks.destroy.completed"), {
+        router.delete(route("tasks.destroy.completed"), {
             preserveScroll: true,
             preserveState: true,
         });
@@ -94,7 +112,8 @@ export default function ToDoList({ taches, themes, activeTheme }) {
                         </p>
                         <div className="flex justify-end gap-2">
                             <button
-                                className="px-4 py-2 rounded bg text-black transition-all hover:brightness-75"
+                                autoFocus
+                                className="px-4 py-2 rounded bg text transition-all hover:brightness-75"
                                 onClick={() => setShowModal(false)}
                             >
                                 Annuler
@@ -119,7 +138,7 @@ export default function ToDoList({ taches, themes, activeTheme }) {
                         className="w-full flex gap-5 flex-col my-[100px] min-w-[min(900px, 90vw)]"
                         style={{ width: "min(900px, 90vw)" }}
                     >
-                        <div className="flex gap-2.5 items-center justify-between">
+                        <div className="flex flex-col justify-center sm:flex-row sm:justify-between gap-2.5 items-center">
                             <h1
                                 className="text font-medium text-h1"
                                 style={{
@@ -148,9 +167,13 @@ export default function ToDoList({ taches, themes, activeTheme }) {
                         </div>
                         <div>
                             <form action="">
+                                <small className="text-muted text-sm-custom">
+                                    Tâche de 50 charactères maximal
+                                </small>
                                 <input
                                     type="text"
                                     placeholder="Create a new ToDo..."
+                                    maxLength={50}
                                     className="w-full bg-secondary h-[50px] text border-none focus:outline-none focus:ring-2 focus:ring-[var(--accent)] px-5 min-h-[70px]"
                                 />
                             </form>
@@ -164,21 +187,33 @@ export default function ToDoList({ taches, themes, activeTheme }) {
                                 </div>
                             ) : (
                                 filteredTask.map((t) => (
-                                    <div className="flex items-center gap-5 min-h-[70px]">
-                                        <form action="">
+                                    <div
+                                        key={t.id}
+                                        className="flex items-center gap-5 min-h-[70px]"
+                                    >
+                                        <div>
                                             <input
                                                 type="checkbox"
-                                                name=""
-                                                id=""
+                                                id={`task-${t.id}`}
+                                                className="hidden peer"
                                                 checked={t.completed}
+                                                onChange={(e) => {
+                                                    handleToggleTask(e, t.id);
+                                                }}
                                             />
-                                        </form>
+                                            <label
+                                                htmlFor={`task-${t.id}`}
+                                                className="flex items-center justify-center w-6 h-6 border-2 rounded-lg cursor-pointer border-[var(--accent)] text-[var(--accent)] peer-checked:bg-[var(--accent)] peer-checked:text-white transition-all"
+                                            >
+                                                {t.completed ? <RxCheck /> : ""}
+                                            </label>
+                                        </div>
                                         <span className="text text-l-custom break-words overflow-wrap break-all">
                                             {t.title}
                                         </span>
                                         <button
                                             className="text text-h3 transition-all hover:brightness-50 ml-auto"
-                                            onClick={() => handleDestroy(t)}
+                                            onClick={() => handleDestroy(t.id)}
                                         >
                                             <RxCross1 />
                                         </button>
