@@ -122,9 +122,9 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
         // Définit un nouveau timeout pour mettre à jour la DB
         intervalRef.current[id] = setTimeout(() => {
             router.put(route("tasks.update.checked", id), {
-                completed: e.target.checked,
                 preserveScroll: true,
                 preserveState: true,
+                completed: e.target.checked,
             });
         }, 300);
     }
@@ -158,11 +158,10 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                         style={{ width: "min(25rem, 90vw)" }}
                     >
                         <h2 className="text-lg font-semibold">
-                            Confirmer la suppression
+                            Confirm Deletion
                         </h2>
                         <p className="text-muted">
-                            Voulez-vous vraiment supprimer toutes les tâches
-                            complétées ?
+                            Are you sure you want to delete all completed tasks?
                         </p>
                         <div className="flex justify-end gap-2">
                             <button
@@ -170,7 +169,7 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                                 className="px-4 py-2 rounded bg text transition-all hover:brightness-75"
                                 onClick={() => setShowModal(false)}
                             >
-                                Annuler
+                                Cancel
                             </button>
                             <button
                                 className="px-4 py-2 rounded transition-all text-white bg-red-500 hover:brightness-75"
@@ -179,7 +178,7 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                                     handleDestroyComplete();
                                 }}
                             >
-                                Supprimer
+                                Delete
                             </button>
                         </div>
                     </div>
@@ -187,7 +186,7 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
             )}
 
             <div className="bg relative min-h-screen">
-                <div className="w-full flex  justify-center">
+                <div className="w-full flex justify-center">
                     <div
                         className="w-full flex gap-5 flex-col my-[50px] min-w-[min(900px, 90vw)]"
                         style={{ width: "min(900px, 90vw)" }}
@@ -219,9 +218,10 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                                 ))}
                             </select>
                         </div>
+
                         <div>
                             <small className="text-muted text-sm-custom">
-                                Tâche de 50 charactères maximal
+                                Task title maximum 50 characters
                             </small>
                             <div
                                 className={`w-full mt-2 h-1 bg-blue-500  ${
@@ -250,7 +250,7 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                                     />
                                     <label
                                         htmlFor="task-create"
-                                        className="flex items-center justify-center w-6 h-6 border-2 rounded-lg cursor-pointer border-[var(--accent)] text-[var(--accent)] peer-hover:bg-[var(--accent)] peer-checked:bg-[var(--accent)] peer-checked:text-[var(--text)] transition-all"
+                                        className="flex items-center justify-center w-6 h-6 border-2 rounded-lg cursor-pointer border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] peer-checked:bg-[var(--accent)] peer-checked:text-[var(--text)] transition-all"
                                     >
                                         {data.completed ? <RxCheck /> : ""}
                                     </label>
@@ -267,11 +267,12 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                                 />
                             </form>
                         </div>
+
                         <div className="bg-secondary px-5">
                             {filteredTask.length <= 0 ? (
                                 <div className="flex items-center min-h-[70px] text text-l-custom text-center">
                                     <p className="w-full">
-                                        Il n'y a aucune tâches pour l'instant
+                                        There are no tasks yet
                                     </p>
                                 </div>
                             ) : (
@@ -292,7 +293,7 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                                             />
                                             <label
                                                 htmlFor={`task-${t.id}`}
-                                                className="flex items-center justify-center w-6 h-6 border-2 rounded-lg cursor-pointer border-[var(--accent)] text-[var(--accent)] peer-checked:bg-[var(--accent)] peer-checked:text-white transition-all"
+                                                className="flex items-center justify-center w-6 h-6 border-2 rounded-lg cursor-pointer border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]  peer-checked:bg-[var(--accent)] peer-checked:text-white transition-all"
                                             >
                                                 {t.completed ? <RxCheck /> : ""}
                                             </label>
@@ -310,6 +311,7 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                                 ))
                             )}
                         </div>
+
                         <div className="flex flex-col gap-5 sm:flex-row bg-secondary sm:gap-2.5 py-2.5 text-muted font-medium justify-between items-center px-5 min-h-[70px]">
                             <span>Items Left: {tempTasks.length}</span>
                             <ul className="flex gap-5">

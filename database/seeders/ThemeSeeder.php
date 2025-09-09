@@ -11,7 +11,7 @@ class ThemeSeeder extends Seeder
     {
         $themes = [
             [
-                'name' => 'Clair',
+                'name' => 'Light',
                 'colors' => [
                     "bg" => "#ffffff",
                     "bg_secondary" => "#f3f6fb",
@@ -22,7 +22,7 @@ class ThemeSeeder extends Seeder
                 'active' => true,
             ],
             [
-                'name' => 'Sombre',
+                'name' => 'Dark',
                 'colors' => [
                     "bg" => "#1f1f2f",
                     "bg_secondary" => "#2a2a3f",
@@ -33,7 +33,7 @@ class ThemeSeeder extends Seeder
                 'active' => false,
             ],
             [
-                'name' => 'Vert',
+                'name' => 'Green',
                 'colors' => [
                     "bg" => "#ecfdf5",
                     "bg_secondary" => "#d1fae5",
@@ -44,7 +44,7 @@ class ThemeSeeder extends Seeder
                 'active' => false,
             ],
             [
-                'name' => 'Chaud',
+                'name' => 'Warm',
                 'colors' => [
                     "bg" => "#fff7ed",
                     "bg_secondary" => "#ffedd5",
@@ -55,7 +55,7 @@ class ThemeSeeder extends Seeder
                 'active' => false,
             ],
             [
-                'name' => 'Lavande',
+                'name' => 'Lavender',
                 'colors' => [
                     "bg" => "#f4f0fc",
                     "bg_secondary" => "#e2d6f8",
