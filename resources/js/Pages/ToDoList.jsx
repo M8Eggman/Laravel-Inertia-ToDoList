@@ -189,7 +189,7 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
             <div className="bg relative min-h-screen">
                 <div className="w-full flex  justify-center">
                     <div
-                        className="w-full flex gap-5 flex-col my-[100px] min-w-[min(900px, 90vw)]"
+                        className="w-full flex gap-5 flex-col my-[50px] min-w-[min(900px, 90vw)]"
                         style={{ width: "min(900px, 90vw)" }}
                     >
                         <div className="flex flex-col justify-center sm:flex-row sm:justify-between gap-2.5 items-center">
@@ -259,7 +259,7 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                                     type="text"
                                     placeholder="Create a new ToDo..."
                                     maxLength={50}
-                                    className="flex-grow bg-secondary h-[50px] text border-none focus:outline-none focus:ring-2 focus:ring-[var(--accent)] px-5 min-h-[70px]"
+                                    className="flex-grow bg-secondary h-[50px] text placeholder:text-[var(--text-muted)] border-none focus:outline-none focus:ring-2 focus:ring-[var(--accent)] px-5 min-h-[70px]"
                                     value={data.title}
                                     onChange={(e) =>
                                         setData("title", e.target.value)
