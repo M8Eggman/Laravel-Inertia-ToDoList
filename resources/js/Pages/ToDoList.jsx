@@ -9,7 +9,6 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
         completed: false,
     });
 
-    const intervalRef = useRef({});
     const [tempTasks, setTempTasks] = useState(taches);
 
     // Initialise le thème depuis localStorage ou le thème actif passé en props
@@ -58,12 +57,20 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                   filter === "active" ? !t.completed : t.completed
               );
 
+    const submitTimeout = useRef(null);
+    const [loading, setLoading] = useState(false);
     function handleSubmit(e) {
         e.preventDefault();
+
+        // Empêche les appels rapides
+        if (loading) return;
 
         // Empêche la création si le champ est vide ou ne contient que des espaces
         if (!data.title || !data.title.trim()) return;
 
+        setLoading(true);
+
+        // Crée la nouvelle tâche
         const lastTask = tempTasks[tempTasks.length - 1];
         const id = (lastTask?.id ?? lastId) + 1;
 
@@ -75,40 +82,19 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
 
         setTempTasks((tasks) => [...tasks, newTask]);
 
-        reset("title");
-        reset("completed");
+        reset();
 
         post(route("tasks.store"), {
             preserveScroll: true,
             preserveState: true,
             data: newTask,
+            onFinish: () => {
+                clearInterval(submitTimeout.current);
+                submitTimeout.current = setTimeout(() => {
+                    setLoading(false);
+                }, 500);
+            },
         });
-    }
-
-    function handleToggleTask(e, id) {
-        // Supprime le timeout existant si re clique
-        if (intervalRef.current[id]) {
-            clearTimeout(intervalRef.current[id]);
-            delete intervalRef.current[id];
-        }
-
-        // Mise à jour immédiate côté frontend
-        setTempTasks((tasks) =>
-            tasks.map((t) =>
-                t.id === id ? { ...t, completed: e.target.checked } : t
-            )
-        );
-
-        console.log(e.target.checked);
-
-        // Définit un nouveau timeout pour mettre à jour la DB
-        intervalRef.current[id] = setTimeout(() => {
-            router.put(route("tasks.update.checked", id), {
-                completed: e.target.checked,
-                preserveScroll: true,
-                preserveState: true,
-            });
-        }, 300);
     }
 
     function handleDestroy(id) {
@@ -201,9 +187,12 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                             <small className="text-muted text-sm-custom">
                                 Tâche de 50 charactères maximal
                             </small>
+                            {loading && (
+                                <div className="w-full mt-2 h-1 bg-blue-500 animate-pulse"></div>
+                            )}
                             <form
                                 onSubmit={handleSubmit}
-                                className="flex px-5 mt-1 gap-5 bg-secondary items-center"
+                                className="flex px-5 mt-2 gap-5 bg-secondary items-center"
                             >
                                 <div>
                                     <input
