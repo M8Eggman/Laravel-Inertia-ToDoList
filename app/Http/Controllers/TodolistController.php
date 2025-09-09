@@ -77,6 +77,12 @@ class TodolistController extends Controller
      */
     public function destroy(Todolist $todolist)
     {
-        //
+        $todolist->delete();
+        return;
+    }
+    public function destroy_completed()
+    {
+        Todolist::where("completed", true)->delete();
+        return;
     }
 }

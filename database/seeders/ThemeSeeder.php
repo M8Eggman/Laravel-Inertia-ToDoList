@@ -54,6 +54,28 @@ class ThemeSeeder extends Seeder
                 ],
                 'active' => false,
             ],
+            [
+                'name' => 'Lavande',
+                'colors' => [
+                    "bg" => "#f4f0fc",
+                    "bg_secondary" => "#e2d6f8",
+                    "text" => "#4b0082",
+                    "text_muted" => "#8661b0",
+                    "accent" => "#7c3aed",
+                ],
+                'active' => false,
+            ],
+            [
+                'name' => 'Fuchsia',
+                'colors' => [
+                    "bg" => "#fff0f6",
+                    "bg_secondary" => "#ffd6e8",
+                    "text" => "#9d174d",
+                    "text_muted" => "#d46c91",
+                    "accent" => "#ec4899",
+                ],
+                'active' => false,
+            ],
         ];
 
         foreach ($themes as $theme) {

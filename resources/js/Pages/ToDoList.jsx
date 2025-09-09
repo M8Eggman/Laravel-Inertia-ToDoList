@@ -1,10 +1,11 @@
 import { useForm } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RxCross1 } from "react-icons/rx";
 import { route } from "ziggy-js";
 
 export default function ToDoList({ taches, themes, activeTheme }) {
     const { delete: destroy } = useForm();
+    const [tempTasks, setTempTasks] = useState(taches);
 
     // Initialise le thème depuis localStorage ou le thème actif passé en props
     const [theme, setTheme] = useState(() => {
@@ -55,10 +56,26 @@ export default function ToDoList({ taches, themes, activeTheme }) {
     // filtre les taches selon si ils sont complétés ou non
     const filteredTask =
         filter === "all"
-            ? taches
-            : taches.filter((t) =>
+            ? tempTasks
+            : tempTasks.filter((t) =>
                   filter === "active" ? !t.completed : t.completed
               );
+
+    function handleDestroy(task) {
+        setTempTasks((tasks) => tasks.filter((t) => t.id !== task.id));
+        destroy(route("tasks.destroy", task.id), {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    }
+
+    function handleDestroyComplete() {
+        setTempTasks((tasks) => tasks.filter((t) => !t.completed));
+        destroy(route("tasks.destroy.completed"), {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    }
 
     return (
         <>
@@ -77,16 +94,16 @@ export default function ToDoList({ taches, themes, activeTheme }) {
                         </p>
                         <div className="flex justify-end gap-2">
                             <button
-                                className="px-4 py-2 rounded bg transition-all hover:brightness-125"
+                                className="px-4 py-2 rounded bg text-black transition-all hover:brightness-75"
                                 onClick={() => setShowModal(false)}
                             >
                                 Annuler
                             </button>
                             <button
-                                className="px-4 py-2 rounded transition-all bg-red-500 hover:brightness-75"
+                                className="px-4 py-2 rounded transition-all text-white bg-red-500 hover:brightness-75"
                                 onClick={() => {
-                                    destroy(route("tasks.clearCompleted"));
                                     setShowModal(false);
+                                    handleDestroyComplete();
                                 }}
                             >
                                 Supprimer
@@ -159,20 +176,18 @@ export default function ToDoList({ taches, themes, activeTheme }) {
                                         <span className="text text-l-custom break-words overflow-wrap break-all">
                                             {t.title}
                                         </span>
-                                        <form action="" className="ml-auto">
-                                            <button
-                                                className="text text-h3 transition-all hover:brightness-50"
-                                                type="submit"
-                                            >
-                                                <RxCross1 />
-                                            </button>
-                                        </form>
+                                        <button
+                                            className="text text-h3 transition-all hover:brightness-50 ml-auto"
+                                            onClick={() => handleDestroy(t)}
+                                        >
+                                            <RxCross1 />
+                                        </button>
                                     </div>
                                 ))
                             )}
                         </div>
                         <div className="flex flex-col gap-5 sm:flex-row bg-secondary sm:gap-2.5 py-2.5 text-muted font-medium justify-between items-center px-5 min-h-[70px]">
-                            <span>Items Left: {taches.length}</span>
+                            <span>Items Left: {tempTasks.length}</span>
                             <ul className="flex gap-5">
                                 <li
                                     onClick={() =>
@@ -189,7 +204,7 @@ export default function ToDoList({ taches, themes, activeTheme }) {
                                         filter !== "active" &&
                                         setFilter("active")
                                     }
-                                    className={`cursor-pointer hover:text-[var(--accent)] transition-all  ${
+                                    className={`cursor-pointer hover:text-[var(--accent)] transition  ${
                                         filter === "active" && "accent"
                                     }`}
                                 >
@@ -200,7 +215,7 @@ export default function ToDoList({ taches, themes, activeTheme }) {
                                         filter !== "completed" &&
                                         setFilter("completed")
                                     }
-                                    className={`cursor-pointer hover:text-[var(--accent)] transition-all  ${
+                                    className={`cursor-pointer hover:text-[var(--accent)] transition  ${
                                         filter === "completed" && "accent"
                                     }`}
                                 >
@@ -209,7 +224,7 @@ export default function ToDoList({ taches, themes, activeTheme }) {
                             </ul>
                             <button
                                 onClick={() => setShowModal(true)}
-                                className="hover:accent transition"
+                                className="hover:text-[var(--accent)] transition"
                             >
                                 Clear Completed
                             </button>
