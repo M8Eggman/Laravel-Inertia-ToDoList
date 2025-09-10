@@ -302,7 +302,7 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                                             {t.title}
                                         </span>
                                         <button
-                                            className="text text-h3 transition-all hover:brightness-50 ml-auto"
+                                            className="text-muted text-h3 transition-all hover:text-[var(--text)] ml-auto"
                                             onClick={() => handleDestroy(t.id)}
                                         >
                                             <RxCross1 />
