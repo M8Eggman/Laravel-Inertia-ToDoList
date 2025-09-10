@@ -2,7 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* .bgImage {
+.todo-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    height: 24rem;
     background-image: linear-gradient(
             to right,
             rgba(0, 0, 255, 0.55),
@@ -12,8 +16,18 @@
     background-position: 50% 35%;
     background-repeat: no-repeat;
     background-size: max(1920px, 100%);
-} */
+}
 
+.todo-container::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--bg-secondary);
+
+    transform: skewY(-6deg);
+    pointer-events: none;
+    opacity: 0.2;
+}
 .bg {
     background-color: var(--bg);
 }

@@ -185,15 +185,15 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                 </div>
             )}
 
-            <div className="bg relative min-h-screen">
+            <div className="todo-container bg relative min-h-screen overflow-y-hidden">
                 <div className="w-full flex justify-center">
                     <div
-                        className="w-full flex gap-5 flex-col my-[50px] min-w-[min(900px, 90vw)]"
+                        className="w-full flex gap-5 flex-col my-[50px] min-w-[min(900px, 90vw)] z-10"
                         style={{ width: "min(900px, 90vw)" }}
                     >
                         <div className="flex flex-col justify-center sm:flex-row sm:justify-between gap-2.5 items-center">
                             <h1
-                                className="text font-medium text-h1"
+                                className="text-white font-medium text-h1"
                                 style={{
                                     letterSpacing:
                                         "clamp(0.25rem, 2.5vw, 2rem)",
@@ -220,11 +220,11 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                         </div>
 
                         <div>
-                            <small className="text-muted text-sm-custom">
+                            <p className="text-white text-sm-custom">
                                 Task title maximum 50 characters
-                            </small>
+                            </p>
                             <div
-                                className={`w-full mt-2 h-1 bg-blue-500  ${
+                                className={`w-full h-1 bg-blue-500  ${
                                     loading
                                         ? "opacity-100 animate-pulse"
                                         : "opacity-0"
@@ -232,7 +232,7 @@ export default function ToDoList({ taches, themes, activeTheme, lastId }) {
                             ></div>
                             <form
                                 onSubmit={handleSubmit}
-                                className="flex px-5 mt-2 gap-5 bg-secondary items-center"
+                                className="flex bg-secondary px-5 mt-2 gap-5 items-center"
                             >
                                 <div>
                                     <input
